@@ -12,7 +12,10 @@ library(RColorBrewer)
 
 source("./Rutinas.R")
 source("./CargaDatos.R")
-path_imagenes <- "./images/Modelo 1/"
+path_imagenes <- "./images/Modelo 2/"
+
+# Transformación logarítmica en la variable objetivo
+datos$Chance.of.Admit <- log(datos$Chance.of.Admit + 1)
 
 # Escalado de datos de variables predictoras
 VarsNames <- names(datos)
@@ -86,7 +89,7 @@ dev.off()
 # -- Modelo PCR --
 pcr_model <- pcr(Chance.of.Admit ~ . - Chance.of.Admit, data = datos, subset = train_samples_index, scale = TRUE, validation = "CV")
 summary(pcr_model)
-preds_pcr <- predict(pcr_model, newdata = datos[-train_samples_index,], ncomp = 4)
+preds_pcr <- predict(pcr_model, newdata = datos[-train_samples_index,], ncomp = 3)
 Metricas_pcr <- CalcularMetricas(preds_pcr, Ytest, N, P)
 cat("-- Resultados de modelo PCR -- \nR2 = ", Metricas_pcr$R2, "\nR2 ajustado = ", Metricas_pcr$R2ajust, "\nMSE = ", Metricas_pcr$MSE, "\nMAE = ", Metricas_pcr$MAE, "\n")
 
@@ -227,7 +230,6 @@ Metricas_reps_ridge$fuente <- "Ridge"
 Metricas_reps_lasso$fuente <- "Lasso"
 Metricas_reps_pcr$fuente <- "PCR"
 Metricas_reps_pls$fuente <- "PLS"
-
 Metricas_reps_combinadas <- bind_rows(
   Metricas_reps_lm, 
   Metricas_reps_ridge, 
