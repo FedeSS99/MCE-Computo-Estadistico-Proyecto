@@ -1,11 +1,9 @@
-CalcularR2 <- function(pred, real, n, p){
+CalcularMetricas <- function(pred, real, n, p){
     RSS <- sum((pred - real)^2)
-    TSS <- sum((pred - mean(real))^2)
-
     MSE <- mean(RSS)
     MAE <- mean(abs(pred - real))
 
-    R2 <- 1.0 - (RSS / TSS)
+    R2 <- cor(real, pred)^{2}
     R2ajust <- 1.0 - (1.0 - R2)*((n - 1)/(n - p - 1))
 
     return(list(R2 = R2, R2ajust = R2ajust, MSE = MSE, MAE = MAE))
